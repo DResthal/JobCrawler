@@ -2,6 +2,9 @@ from selenium import webdriver
 from bs4 import BeautifulSoup
 
 
+def temp_writer(data):
+    with open('results.html', 'a') as f:
+        f.write(str(data))
 
 def make_request():
     firefox_Options = webdriver.FirefoxOptions()
@@ -17,13 +20,33 @@ def make_request():
 
 def get_item_list(soup):
     job_list = soup.find('ul', attrs='jobsearch-ResultsList')
-    list_items = job_list.find_all('li')
+    with open('dump.html', 'w') as f:
+        f.write(str(job_list.prettify))
+    extract_cards(job_list)
 
-    parse_jobs(list_items)
-
-def parse_jobs(items):
+def extract_cards(items):
+    # Iterate over all <li> elements in the list
     for i in items:
-        print(i.find('div', attrs='cardOutline'))
+        table = i.find('table', attrs='jobCard_mainContent')
+        if table is not None:
+            title = table.find('h2', attrs='jobTitle').span.contents[0]
+            company_name = table.find('span', attrs='companyName').string
+            location = table.find('div', attrs='companyLocation').string
+            salary_only = table.find('div', attrs='salaryOnly')
+            try:
+                salary_only.svg.extract()
+            except:
+                pass
+
+            salary = salary_only.contents[0].text
+            temp_writer(salary)
+
+
+            print(title)
+            print(company_name)
+            print(location)
+            print(salary)
+            print('\n')
 
 
 if __name__ == "__main__":
