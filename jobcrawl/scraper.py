@@ -53,7 +53,7 @@ def get_jobs(posts):
 
             # Salary
             if i.find("div", attrs={"class": "salaryOnly"}) != None:
-                salary = i.find("div", attrs={"class": "salaryOnly"}).text
+                salary = i.find("div", attrs={"class": "salaryOnly"}).div.text
             else:
                 salary = None
 
@@ -87,7 +87,7 @@ def get_jobs(posts):
 
             job_list.append(job_listing)
 
-    # print(json.dumps(job_list, indent=2, sort_keys=False))
+    print(json.dumps(job_list, indent=2, sort_keys=False))
 
 
 def clean_job(job: dict = None) -> dict:
@@ -117,20 +117,22 @@ def clean_job(job: dict = None) -> dict:
 
         job[k] = v
 
+    return job
+
 
 def convert_date(d):
 
     # Convert "just posted" and "today"
     if d.lower() == "just posted":
-        d = datetime.today()
+        d = datetime.today().strftime("%m-%d-%Y")
         return d
 
     if d.lower() == "today":
-        d = datetime.today()
+        d = datetime.today().strftime("%m-%d-%Y")
         return d
 
     if d.lower() == "hiring ongoing":
-        d = datetime.today()
+        d = datetime.today().strftime("%m-%d-%Y")
         return d
 
     d = re.findall("\d+", d)
@@ -141,11 +143,31 @@ def convert_date(d):
 
 
 def extract_salary(s):
-    return s
+    
+    # So far, this chained OR statement is necessary here.
+    # There are cleaner regex's however they typically result in each digit being separately extracted.
+    # This complicates the cleaning process and would require converting them back to full numbers. 
+    # Examples: 
+    # ['3', '8,', '9', '6', '3', '7', '9,', '5', '8', '0'] = 38,963 - 79,580
+    # ['6', '5,', '0', '0', '0', '7', '0,', '0', '0', '0'] = 65,000 - 70,000
+    # ['5', '9.', '5', '0'] = 59.50
+
+    m = re.findall('\d+,\d+|\d+.\d+[K]|\d+.\d+|\d+', str(s))
+    if len(m) >1:
+        if str(m[0]).endswith('K'):
+            m = int(float(str(m[0]).replace('K', '').strip()) * 1000)
+        
+        if type(m) == list:
+            m = m[0]
+
+        if type(m) == str:
+            m = m.strip().replace(',', '')
+        
+        return float(m)
 
 
 if __name__ == "__main__":
-    pages = 1
+    pages = 2
     for page in range(pages):
-        print(f"Working on page: {page + 1}")
+        #print(f"Working on page: {page + 1}")
         make_request(page)
