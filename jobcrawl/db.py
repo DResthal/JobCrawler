@@ -38,7 +38,8 @@ class JobDB:
                         salary=listing["salary"],
                         summary=listing["summary"],
                         posted=listing["posted"],
-                    ).on_conflict_do_nothing(index_elements=['url'])
+                    )
+                    .on_conflict_do_nothing(index_elements=["url"])
                 )
             except:
                 print(sys.exc_info())
