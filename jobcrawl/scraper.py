@@ -47,7 +47,7 @@ def get_jobs(posts):
             # Indeed URL
 
             if i.find("h2", attrs={"class": "jobTitle"}).a != None:
-                url = i.find("h2", attrs={"class": "jobTitle"}).a["href"]
+                url = 'https://www.indeed.com' + i.find("h2", attrs={"class": "jobTitle"}).a["href"]
 
             # Location
             if i.find("div", attrs={"class": "companyLocation"}) != None:
