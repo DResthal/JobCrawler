@@ -11,10 +11,10 @@ This will also give the project more headway once I begin scraping job descripti
 ## To Dos  
 
 1. [X] Setup Scrapy to scrape a dummy site  
-2. [ ] Setup Selenium as middleware. 
+2. [X] Setup Selenium as middleware. 
     - Scrapy-Selenium was abandoned some time ago. Some workarounds are necessary to make the package work with current versions of Python, Scrapy, Selenium and web drivers. I intend to instead use Scrapy-Selenium as reference and implement Selenium Firefox Headless browser as a middleware for Scrapy requests.  
-3. [ ] Verify that Javascript websites such as Indeed.com can be loaded without JS errors.  
-4. Save entries to the database.  
-5. Send JSON versions of each entry to the API, which will eventually replace the storage mechanism in this project.  
+3. [X] Verify that Javascript websites such as Indeed.com can be loaded without JS errors.  
+4. [ ] Save entries to the database.  
+5. [ ] Send JSON versions of each entry to the API, which will eventually replace the storage mechanism in this project.  
     - Endgoal is to send JSON from the web scraper to the API. API will handle DB requests entirely.  
     
