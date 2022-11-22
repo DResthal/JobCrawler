@@ -38,6 +38,7 @@ class JobDB:
                         salary=listing["salary"],
                         summary=listing["summary"],
                         posted=listing["posted"],
+                        entered = listing['entered']
                     )
                     .on_conflict_do_nothing(index_elements=["url"])
                 )
