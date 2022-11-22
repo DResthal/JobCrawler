@@ -83,6 +83,7 @@ def get_jobs(posts):
                 "salary": salary,
                 "summary": short_description,
                 "posted": date,
+                "entered": datetime.now()
             }
 
             job_listing = clean_job(job_listing)
@@ -108,6 +109,9 @@ def clean_job(job: dict = None) -> dict:
             continue
 
         if k == "posted":
+            continue
+
+        if k == "entered":
             continue
 
         if v == None:
