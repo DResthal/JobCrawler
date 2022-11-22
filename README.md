@@ -10,7 +10,7 @@ This will also give the project more headway once I begin scraping job descripti
 
 ## To Dos  
 
-1. [ ] Setup Scrapy to scrape a dummy site  
+1. [X] Setup Scrapy to scrape a dummy site  
 2. [ ] Setup Selenium as middleware. 
     - Scrapy-Selenium was abandoned some time ago. Some workarounds are necessary to make the package work with current versions of Python, Scrapy, Selenium and web drivers. I intend to instead use Scrapy-Selenium as reference and implement Selenium Firefox Headless browser as a middleware for Scrapy requests.  
 3. [ ] Verify that Javascript websites such as Indeed.com can be loaded without JS errors.  
