@@ -1,4 +1,5 @@
 import scrapy
+from JobCrawler.items import JobCardItem
 
 # Using BS4 here as selectors have already been developed
 # in previous code.
@@ -24,4 +25,10 @@ class JobsSpider(scrapy.Spider):
             pass
         
         for job in job_list:
-                yield job
+            try:
+                title = job.find("div", attrs={"class" : "jobTitle"}).text
+            except AttributeError:
+                title = None
+        
+        for job in job_list:
+                yield JobCardItem()

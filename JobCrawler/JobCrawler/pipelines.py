@@ -16,8 +16,6 @@ class JobcrawlerPipeline:
         pass
 
     def process_item(self, job, spider):
-        with open('temp.html', 'a') as f:
-            f.write(job)
         
         print("Job item processed.")
         return JobCardItem()

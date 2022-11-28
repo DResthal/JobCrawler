@@ -68,7 +68,8 @@ class JobcrawlerDownloaderMiddleware:
     def __init__(self):
         firefox_options = webdriver.FirefoxOptions()
         firefox_options.headless = True
-        self.browser = webdriver.Firefox(options=firefox_options)
+        self.browser = webdriver.Remote(command_executor="http://localhost:4444/wd/hub", options=firefox_options)
+
 
     @classmethod
     def from_crawler(cls, crawler):
@@ -115,3 +116,7 @@ class JobcrawlerDownloaderMiddleware:
 
     def spider_opened(self, spider):
         spider.logger.info("Spider opened: %s" % spider.name)
+        
+    def spider_closed(self, spider):
+        self.browser.close()
+        pass
