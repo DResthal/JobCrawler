@@ -42,7 +42,10 @@ class JobsSpider(scrapy.Spider):
 
             # Indeed URL
             try:
-                url = job.find("h2", attrs={"class": "jobTitle"}).a["href"]
+                url = (
+                    "https://indeed.com"
+                    + job.find("h2", attrs={"class": "jobTitle"}).a["href"]
+                )
             except AttributeError:
                 url = None
 

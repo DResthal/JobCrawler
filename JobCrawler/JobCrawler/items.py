@@ -15,4 +15,3 @@ class JobCardItem(scrapy.Item):
     summary = scrapy.Field()
     posted = scrapy.Field()
     scraped = scrapy.Field()
-    pass
