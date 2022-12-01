@@ -117,22 +117,7 @@ class SeleniumRemoteRequest:
         pass
 
     def spider_opened(self, spider):
-        print(
-            """
-              ###############################################
-              # spider_opened function is being run as expected
-              ###############################################
-              """
-        )
         spider.logger.info("Spider opened: %s" % spider.name)
 
     def spider_closed(self, spider):
-        print(
-            """
-            ###############################################
-            # spider_closedfunction is being run as expected
-            ###############################################
-            """
-        )
-
         self.browser.close()
