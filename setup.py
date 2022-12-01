@@ -1,12 +1,15 @@
-from setuptools import setup
+# Automatically created by: scrapyd-deploy
+
+from setuptools import setup, find_packages
 
 setup(
-    name='job_crawl',
-    version='0.1.0',
-    packages=['jobcrawl'],
-    url='https://github.com/NeilClack/job_crawl',
-    license='GPL-3.0',
-    author='Neil Clack',
-    author_email='employ.neil@gmail.com',
-    description='Web scraper for job postings'
+    name="JobCrawler",
+    version="1.0",
+    author="Neil Clack",
+    author_email="employ.neil@gmail.com",
+    url="https://github.com/NeilClack/JobCrawler",
+    license="GPL-3.0",
+    description="Scrapy web scraper for job listings",
+    packages=find_packages(),
+    entry_points={"scrapy": ["settings = JobCrawler.settings"]},
 )
