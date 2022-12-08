@@ -69,7 +69,7 @@ class SeleniumRemoteRequest:
         firefox_options = webdriver.FirefoxOptions()
         firefox_options.headless = True
         self.browser = webdriver.Remote(
-            command_executor="http://localhost:4444/wd/hub", options=firefox_options
+            command_executor="127.0.0.1:4444/wd/hub", options=firefox_options
         )
 
     @classmethod
