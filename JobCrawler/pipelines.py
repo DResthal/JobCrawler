@@ -59,7 +59,7 @@ class JobcrawlerPipeline:
                         salary=job["salary"],
                         summary=job["summary"],
                         posted=job["posted"],
-                        entered=job["scraped"],
+                        scraped=job["scraped"],
                     )
                     .on_conflict_do_nothing(index_elements=["url"])
                 )
