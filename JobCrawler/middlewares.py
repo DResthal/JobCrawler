@@ -91,6 +91,7 @@ class SeleniumRemoteRequest:
         # - or return a Request object
         # - or raise IgnoreRequest: process_exception() methods of
         #   installed downloader middleware will be called
+        spider.logger.info("Browser opened: %s" % spider.name)
         self.browser.get(request.url)
         body = self.browser.page_source
         url = self.browser.current_url
@@ -127,12 +128,11 @@ class SeleniumRemoteRequest:
         spider.logger.info("Spider opened: %s" % spider.name)
 
     def spider_closed(self, spider):
-        print(
-            """
-            ###############################################
-            # spider_closedfunction is being run as expected
-            ###############################################
-            """
-        )
+        try:
+            self.browser.quit()
+            spider.logger.info("Browser quit: %s" % spider.name)
+        except:
+            self.browser.close()
+            spider.logger.info("Browser closed: %s" % spider.name)
 
-        self.browser.close()
+
