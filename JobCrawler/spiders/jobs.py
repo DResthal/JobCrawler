@@ -1,6 +1,5 @@
 import scrapy
 from JobCrawler.items import JobCardItem
-from scrapy import signals
 from datetime import datetime
 
 # Using BS4 here as selectors have already been developed
@@ -60,7 +59,9 @@ class JobsSpider(scrapy.Spider):
             try:
                 salary = job.find("div", attrs={"class": "salaryOnly"}).div.text
             except AttributeError:
-                salary = None
+                salary = 0.00
+
+            print(f"type: {type(salary)}    value: {salary}")
 
             # Footer
             if job.find("tr", attrs={"class": "underShelfFooter"}):

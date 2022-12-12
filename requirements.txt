@@ -1,5 +1,5 @@
 scrapy
-SQLAlchemy
+sqlalchemy
 psycopg2-binary
 bs4
 selenium

@@ -153,14 +153,17 @@ class JobcrawlerPipeline:
         # ['5', '9.', '5', '0'] = 59.50
 
         m = re.findall("\d+,\d+|\d+.\d+[K]|\d+.\d+|\d+", str(s))
-        if len(m) > 1:
-            if str(m[0]).endswith("K"):
-                m = int(float(str(m[0]).replace("K", "").strip()) * 1000)
+        if m == None:
+            return 0.00
+        else:
+            if len(m) > 1:
+                if str(m[0]).endswith("K"):
+                    m = int(float(str(m[0]).replace("K", "").strip()) * 1000)
 
-            if type(m) == list:
-                m = m[0]
+                if type(m) == list:
+                    m = m[0]
 
-            if type(m) == str:
-                m = m.strip().replace(",", "")
+                if type(m) == str:
+                    m = m.strip().replace(",", "")
 
-            return float(m)
+                return float(m)
