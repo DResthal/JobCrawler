@@ -57,7 +57,7 @@ class JobcrawlerPipeline:
         spider.logger.debug(f"Job salary just before insertion: {job['salary']}")
         if job['salary'] is None:
             job['salary'] = float(0.00)
-        spider.logger.debug(f"Verifying job salary is set to zero before insertion: {job['salary']}")
+        spider.logger.debug(f"Verifying job salary is set before insertion: {job['salary']}")
         with self.engine.connect() as self.conn:
             try:
                 insert_stmt = (
@@ -185,11 +185,11 @@ class JobcrawlerPipeline:
         m = re.findall("\d+,\d+|\d+.\d+[K]|\d+.\d+|\d+", str(s))
         spider.logger.debug(f"clean_salary was passed: {s}")
 
-        # try:
-        #     float(''.join(m))
-        #     return m
-        # except:
-        #     spider.logger.info("")
+        try:
+            float(''.join(m))
+            return m[0]
+        except:
+            spider.logger.info("")
 
         if m == None:
             spider.logger.debug("No matches found in regex, returning float(0.00)")
