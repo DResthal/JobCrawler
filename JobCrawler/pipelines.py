@@ -5,8 +5,7 @@
 
 
 # useful for handling different item types with a single interface
-from itemadapter import ItemAdapter
-from .items import JobCardItem
+import logging
 from datetime import datetime, timedelta
 from sqlalchemy import create_engine
 from sqlalchemy.exc import OperationalError, ProgrammingError
@@ -28,16 +27,14 @@ class JobcrawlerPipeline:
         return cls(db_uri=os.getenv("POSTGRES_DB_URI"))
 
     def open_spider(self, spider):
-        print("open_spider")
-
         try:
-            print("trying connection")
+            spider.logger.info("Attempting connection")
             self.engine.connect()
-            print("connected")
+            spider.logger.info("connected")
         except OperationalError as e:
-            print(e)
-            print(
-                "Make sure the database server is availalbe and that the database exists."
+            spider.logger.info(e)
+            spider.logger.info(
+                "Unable to connect to database. Make sure the server is available and that the database exists."
             )
             raise
 
@@ -46,7 +43,21 @@ class JobcrawlerPipeline:
         pass
 
     def process_item(self, job, spider):
-        job = self.clean_job(job)
+        """_summary_
+
+        Args:
+            job (_type_): _description_
+            spider (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+
+        job = self.clean_job(job, spider=spider)
+        spider.logger.debug(f"Job salary just before insertion: {job['salary']}")
+        if job['salary'] is None:
+            job['salary'] = float(0.00)
+        spider.logger.debug(f"Verifying job salary is set to zero before insertion: {job['salary']}")
         with self.engine.connect() as self.conn:
             try:
                 insert_stmt = (
@@ -63,29 +74,41 @@ class JobcrawlerPipeline:
                     )
                     .on_conflict_do_nothing(index_elements=["url"])
                 )
+                spider.logger.debug(
+                    f"Successfully saved {job['title']} at {job['company']} to database")
             except:
-                print(sys.exc_info())
+                spider.logger.error(sys.exc_info())
+                spider.logger.debug(f"Problematic job: {job}")
                 raise
 
             try:
                 self.conn.execute(insert_stmt)
+                spider.logger.info("Statement execution successful")
             except ProgrammingError as e:
-                print(e)
+                spider.logger.error("Unable to execute insert statement.")
+                spider.logger.error(e)
 
         return job
 
-    def clean_job(self, job: dict = None) -> dict:
-        """Validates and converts all JobItem fields.
+    def clean_job(self, job: dict, spider) -> dict:
+        """_summary_
 
         Args:
-            job (dict, optional): The JobItem to clean, in dict format. Defaults to None.
+            job (dict): _description_
+            spider (_type_): _description_
 
         Returns:
-            dict: JobItem dict.
+            dict: _description_
         """
 
-        job["posted"] = self.convert_date(job["posted"])
-        job["salary"] = self.extract_salary(job["salary"])
+        job["posted"] = self.convert_date(job["posted"], spider=spider, title=job["title"], company=job["company"])
+
+        spider.logger.info(f"Job salary is {job['salary']} before being cleaned.")
+        if job["salary"] != None:
+            job["salary"] = self.extract_salary(job["salary"], spider=spider, title=job["title"], company=job["company"])
+        else:
+            spider.logger.info(f"Salary at {job['company']} for {job['title']} not available. Set to 0.00")
+            job["salary"] = 0.00
 
         for k, v in job.items():
             if k == "salary":
@@ -106,15 +129,19 @@ class JobcrawlerPipeline:
 
         return job
 
-    def convert_date(self, d: str) -> datetime.date:
-        """Converts Indeed's standard string dates into real Python datetime objects.
+    def convert_date(self, d: str, spider, title: str, company: str) -> datetime.date:
+        """_summary_
 
         Args:
-            d (datetime, optional): String representation of a date from Indeed.
+            d (str): _description_
+            spider (_type_): _description_
+            title (str): _description_
+            company (str): _description_
 
         Returns:
-            datetime.date: Python native Date object.
+            datetime.date: _description_
         """
+
         # Convert "just posted" and "today"
         if d.lower() == "just posted":
             d = datetime.today().strftime("%m-%d-%Y")
@@ -134,14 +161,17 @@ class JobcrawlerPipeline:
 
         return d
 
-    def extract_salary(self, s: str = None) -> float:
-        """Converts multiple salary formats into standard float values.
+    def extract_salary(self, s: str, spider, title: str, company: str) -> float:
+        """_summary_
 
         Args:
-            s (str, optional): The string representation of salary to convert. Defaults to None.
+            s (str): _description_
+            spider (_type_): _description_
+            title (str): _description_
+            company (str): _description_
 
         Returns:
-            float: Float representation of the salary.
+            float: _description_
         """
 
         # So far, this chained OR statement is necessary here.
@@ -153,7 +183,16 @@ class JobcrawlerPipeline:
         # ['5', '9.', '5', '0'] = 59.50
 
         m = re.findall("\d+,\d+|\d+.\d+[K]|\d+.\d+|\d+", str(s))
+        spider.logger.debug(f"clean_salary was passed: {s}")
+
+        # try:
+        #     float(''.join(m))
+        #     return m
+        # except:
+        #     spider.logger.info("")
+
         if m == None:
+            spider.logger.debug("No matches found in regex, returning float(0.00)")
             return 0.00
         else:
             if len(m) > 1:
@@ -166,4 +205,8 @@ class JobcrawlerPipeline:
                 if type(m) == str:
                     m = m.strip().replace(",", "")
 
-                return float(m)
+                spider.logger.debug(
+                    f"Converted {s} to {m} for {title} at {company}."
+                )
+
+                return (float(m))

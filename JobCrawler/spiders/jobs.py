@@ -1,6 +1,9 @@
 import scrapy
+import logging
 from JobCrawler.items import JobCardItem
 from datetime import datetime
+from scrapy.utils.log import configure_logging
+import os
 
 # Using BS4 here as selectors have already been developed
 # in previous code.
@@ -8,6 +11,14 @@ from bs4 import BeautifulSoup
 
 
 class JobsSpider(scrapy.Spider):
+
+    configure_logging(install_root_handler=False)
+    logging.basicConfig(
+        filename="/tmp/jobcrawler.log",
+        format="%(levelname)s: %(message)s",
+        level=logging.INFO,
+    )
+
     name = "jobs"
     allowed_domains = ["indeed.com"]
     start_urls = [
@@ -15,6 +26,13 @@ class JobsSpider(scrapy.Spider):
     ]
 
     def parse(self, response):
+        self.logger.info(
+            f"""
+            ####################################################################{os.linesep}
+            Starting new scraping job: {datetime.utcnow()}{os.linesep}
+            ####################################################################{os.linesep}
+            """
+        )
         soup = BeautifulSoup(response.body, features="lxml")
 
         # Get card container
@@ -60,8 +78,6 @@ class JobsSpider(scrapy.Spider):
                 salary = job.find("div", attrs={"class": "salaryOnly"}).div.text
             except AttributeError:
                 salary = 0.00
-
-            print(f"type: {type(salary)}    value: {salary}")
 
             # Footer
             if job.find("tr", attrs={"class": "underShelfFooter"}):
