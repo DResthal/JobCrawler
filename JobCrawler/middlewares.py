@@ -12,6 +12,10 @@ from itemadapter import is_item, ItemAdapter
 # Selenium imports for downloader middleware
 from selenium import webdriver
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 class JobcrawlerSpiderMiddleware:
     # Not all methods need to be defined. If a method is not defined,
