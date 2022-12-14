@@ -22,7 +22,8 @@ class JobsSpider(scrapy.Spider):
     name = "jobs"
     allowed_domains = ["indeed.com"]
     start_urls = [
-        "https://www.indeed.com/jobs?q=Data+Analyst&l=Remote&sort=date&fromage=7"
+        "https://www.indeed.com/jobs?q=Data+Analyst&l=Remote&sort=date&fromage=7",
+        "https://www.indeed.com/jobs?q=Python+Developer&l=Remote&sc=0kf%3Aattr%28DSQF7%29attr%28X62BT%29%3B&rbl=Remote&jlid=aaa2b906602aa8f5&fromage=7&vjk=098d7afbd4fad8f1"
     ]
 
     def parse(self, response):
