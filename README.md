@@ -18,16 +18,13 @@ At this time, this project only collects information regarding Data Analytics an
 
 ## Deployment  
 
-
-
 ---  
 
 ## To Dos  
 
-1. [ ] Create shell script for db backups
-2. [ ] Implement CI/CD  
-3. [ ] Finalize documentation  
-4. [ ] Convert data store to send to API  
-    4a. [ ] Send JSON to API  
-    4b. [ ] Handle server responses appropriately
+1. [ ] Implement CI/CD  
+2. [ ] Finalize documentation  
+3. [ ] Convert data store to send to API  
+    3a. [ ] Send JSON to API  
+    3b. [ ] Handle server responses appropriately
     
